@@ -43,13 +43,12 @@ void session(tcp::socket sock)
         file.close();
         std::stringstream ss;
         ss << *itr2 << "\n" << size << "\n";
-        char graaa[1024];
-        std::memset(graaa, 0, sizeof graaa);
-        std::strcpy(graaa, ss.str().substr(14, std::string::npos).c_str());
+        char extra[1024];
+        std::memset(extra, 0, sizeof extra);
+        std::strcpy(extra, ss.str().substr(14, std::string::npos).c_str());
         size_t request_length = size;
-        boost::asio::write(sock, boost::asio::buffer(graaa, 1024));
+        boost::asio::write(sock, boost::asio::buffer(extra, 1024));
         boost::asio::write(sock, boost::asio::buffer(memblock, request_length));
-
         delete[] memblock;
 
         std::cout << "200 OK" << std::endl;

@@ -10,8 +10,6 @@
 
 using boost::asio::ip::tcp;
 
-const int max_length = 18129;
-
 bool first = true;
 
 int main()
@@ -22,7 +20,7 @@ int main()
   tcp::resolver resolver(io_service);
   try
   {
-    boost::asio::connect(s, resolver.resolve({"127.0.0.1", "8080"}));
+    boost::asio::connect(s, resolver.resolve({"127.0.0.1", "8080"})); // TODO : change by server ip
   }
   catch (std::exception& e)
   {
