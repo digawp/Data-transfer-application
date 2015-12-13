@@ -10,17 +10,15 @@
 
 using boost::asio::ip::tcp;
 
-bool first = true;
-
 int main()
 {
-
   boost::asio::io_service io_service;
-  tcp::socket s(io_service);
+  tcp::socket socket(io_service);
   tcp::resolver resolver(io_service);
   try
   {
-    boost::asio::connect(s, resolver.resolve({"127.0.0.1", "8080"})); // TODO : change by server ip
+    boost::asio::connect(socket, resolver.resolve({"127.0.0.1", "8080"})); // TODO : change by server ip
+    boost::asio::write(socket, boost::asio::buffer("a", 1));
   }
   catch (std::exception& e)
   {
@@ -28,21 +26,21 @@ int main()
     return 1;
   }
 
-    boost::asio::write(s, boost::asio::buffer("a", 1));
-
-    std::string path;
-    std::string size;
-    size_t tsize;
-    char* extra;
-    char* data;
-    for (;;)
-    {
-      if (first) {
+  std::string path;
+  std::string size;
+  size_t tsize;
+  char* extra;
+  char* data;
+  bool switcher = true;
+  
+  for (;;)
+  {
+      if (switcher) {
         extra = new char[1024];
         std::memset(extra, 0, 1024);
 
         boost::system::error_code error;
-        boost::asio::read(s, boost::asio::buffer(extra, 1024), error);
+        boost::asio::read(socket, boost::asio::buffer(extra, 1024), error);
         std::cout << extra << std::endl;
         if (error == boost::asio::error::eof)
           break;
@@ -58,13 +56,13 @@ int main()
         tmp.clear();
         size.clear();
         delete[] extra;
-        first = false;
+        switcher = false;
       }
       else {
         data = new char[tsize];
 
         boost::system::error_code error;
-        boost::asio::read(s, boost::asio::buffer(data, tsize), error);
+        boost::asio::read(socket, boost::asio::buffer(data, tsize), error);
         if (error == boost::asio::error::eof)
           break;
         else if (error)
@@ -82,8 +80,8 @@ int main()
         file2.write (data, tsize);
         file2.close();
         delete[] data;
-        first = true;
+        switcher = true;
       }
-    }
+  }
   return 0;
 }

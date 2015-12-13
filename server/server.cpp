@@ -11,7 +11,7 @@
 
 using boost::asio::ip::tcp;
 
-void session(tcp::socket sock)
+void session(tcp::socket socket)
 {
   try
   {
@@ -23,7 +23,6 @@ void session(tcp::socket sock)
       if (!boost::filesystem::is_directory(itr->path().string()))
       {
         paths.push_back(itr->path().string());
-        std::cout << itr->path().string() << std::endl;
       }
       ++itr;
     }
@@ -47,8 +46,8 @@ void session(tcp::socket sock)
         std::memset(extra, 0, sizeof extra);
         std::strcpy(extra, ss.str().substr(14, std::string::npos).c_str());
         size_t request_length = size;
-        boost::asio::write(sock, boost::asio::buffer(extra, 1024));
-        boost::asio::write(sock, boost::asio::buffer(memblock, request_length));
+        boost::asio::write(socket, boost::asio::buffer(extra, 1024));
+        boost::asio::write(socket, boost::asio::buffer(memblock, request_length));
         delete[] memblock;
 
         std::cout << "200 OK" << std::endl;
@@ -67,7 +66,7 @@ void session(tcp::socket sock)
   }
   catch (std::exception& e)
   {
-    std::cerr << "Exception in thread: " << e.what() << "\n";
+    std::cerr << "Exception in thread: " << e.what() << std::endl;
   }
 }
 
@@ -76,9 +75,9 @@ void server(boost::asio::io_service& io_service, unsigned short port)
   tcp::acceptor a(io_service, tcp::endpoint(tcp::v4(), port));
   for (;;)
   {
-    tcp::socket sock(io_service);
-    a.accept(sock);
-    std::thread(session, std::move(sock)).detach();
+    tcp::socket socket(io_service);
+    a.accept(socket);
+    std::thread(session, std::move(socket)).detach();
   }
 }
 
@@ -91,7 +90,7 @@ int main()
   }
   catch (std::exception& e)
   {
-    std::cerr << "Exception: " << e.what() << "\n";
+    std::cerr << "Exception: " << e.what() << std::endl;
   }
   return 0;
 }
