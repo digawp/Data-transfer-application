@@ -11,10 +11,13 @@
 
 using boost::asio::ip::tcp;
 
-void session(tcp::socket socket)
+const std::string parent_path = strcat(getenv("HOME"), "/Desktop/ServerFiles");
+
+void session(tcp::socket socket, std::vector<std::string> paths)
 {
   try
   {
+<<<<<<< HEAD
     const boost::filesystem::path path = "../ServerFiles/";
     boost::filesystem::recursive_directory_iterator itr(path);
     std::vector<std::string> paths;
@@ -27,6 +30,8 @@ void session(tcp::socket socket)
       ++itr;
     }
 
+=======
+>>>>>>> 4ed34401b47008ba7aa354003be40fbf74c1e27c
     std::streampos size;
     char* memblock;
     std::vector<std::string>::iterator itr2;
@@ -40,16 +45,23 @@ void session(tcp::socket socket)
         file.seekg (0, std::ios::beg);
         file.read (memblock, size);
         file.close();
+
+        // construct the metadata of the file to be sent
         std::stringstream ss;
         ss << *itr2 << "\n" << size << "\n";
         char extra[1024];
+<<<<<<< HEAD
         std::memset(extra, 0, 1024);
         std::strcpy(extra, ss.str().substr(14, std::string::npos).c_str());
+=======
+        std::memset(extra, 0, sizeof extra);
+        std::strcpy(extra, ss.str().substr(parent_path.length(), std::string::npos).c_str());
+
+        size_t request_length = size;
+>>>>>>> 4ed34401b47008ba7aa354003be40fbf74c1e27c
         boost::asio::write(socket, boost::asio::buffer(extra, 1024));
         boost::asio::write(socket, boost::asio::buffer(memblock, size));
         delete[] memblock;
-
-        std::cout << "200 OK" << std::endl;
       }
       catch (std::fstream::failure e)
       {
@@ -69,6 +81,30 @@ void session(tcp::socket socket)
   }
 }
 
+<<<<<<< HEAD
+=======
+void server(boost::asio::io_service& io_service, unsigned short port)
+{
+  boost::filesystem::path path(parent_path);
+  boost::filesystem::recursive_directory_iterator itr(path);
+  std::vector<std::string> paths;
+  while (itr != boost::filesystem::recursive_directory_iterator())
+  {
+    if (!boost::filesystem::is_directory(itr->path()))
+    {
+      paths.push_back(itr->path().string());
+    }
+    ++itr;
+  }
+
+  tcp::acceptor a(io_service, tcp::endpoint(tcp::v4(), port));
+  tcp::socket socket(io_service);
+  std::cout << "listening on " << port << std::endl;
+  a.accept(socket);
+  std::thread(session, std::move(socket), std::move(paths)).join();
+}
+
+>>>>>>> 4ed34401b47008ba7aa354003be40fbf74c1e27c
 int main()
 {
   try
