@@ -14,6 +14,8 @@ Please read the "Projet-statement" file
 ```sh
 - Build bin :
 $ make build
+- Debug bin :
+$ make debug
 - Clean all :
 $ make clean
 - Rebuild :
