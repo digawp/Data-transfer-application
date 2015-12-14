@@ -41,6 +41,7 @@ int main()
         std::memset(extra, 0, 1024);
 
         boost::asio::read(socket, boost::asio::buffer(extra, 1024), error);
+        std::cout << extra << std::endl;
         if (error == boost::asio::error::eof)
           break;
         else if (error)
@@ -65,11 +66,11 @@ int main()
           throw boost::system::system_error(error);
 
         if (path.find_last_of("/") != std::string::npos) {
-          boost::filesystem::path dir(strcat(getenv("HOME"), "/Desktop/ClientFiles") + path.substr(0, path.find_last_of("/")));
+          boost::filesystem::path dir(strcat(getenv("HOME"), "/Bureau/ClientFiles") + path.substr(0, path.find_last_of("/")));
           boost::filesystem::create_directories(dir);
         }
 
-        std::ofstream file2 ("../ClientFiles/" + path, std::ios::out | std::ios::binary | std::ios::ate);
+        std::ofstream file2 (strcat(getenv("HOME"), "/Bureau/ClientFiles") + path, std::ios::out | std::ios::binary | std::ios::ate);
         path.clear();
         file2.seekp (0, std::ios::beg);
         file2.write (data, tsize);

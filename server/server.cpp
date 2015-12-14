@@ -15,7 +15,7 @@ void session(tcp::socket socket)
 {
   try
   {
-    const boost::filesystem::path path = strcat(getenv("HOME"), "/Desktop/ServerFiles");
+    const boost::filesystem::path path = strcat(getenv("HOME"), "/Bureau/ServerFiles");
     boost::filesystem::recursive_directory_iterator itr(path);
     std::vector<std::string> paths;
     while (itr != boost::filesystem::recursive_directory_iterator())
@@ -44,7 +44,7 @@ void session(tcp::socket socket)
         ss << *itr2 << "\n" << size << "\n";
         char extra[1024];
         std::memset(extra, 0, 1024);
-        std::strcpy(extra, ss.str().substr(14, std::string::npos).c_str());
+        std::strcpy(extra, ss.str().substr(path.string().length(), std::string::npos).c_str());
         boost::asio::write(socket, boost::asio::buffer(extra, 1024));
         boost::asio::write(socket, boost::asio::buffer(memblock, size));
         delete[] memblock;
