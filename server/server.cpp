@@ -15,7 +15,7 @@ void session(tcp::socket socket)
 {
   try
   {
-    boost::filesystem::path path = "../ServerFiles/";
+    const boost::filesystem::path path = "../ServerFiles/";
     boost::filesystem::recursive_directory_iterator itr(path);
     std::vector<std::string> paths;
     while (itr != boost::filesystem::recursive_directory_iterator())
@@ -31,7 +31,7 @@ void session(tcp::socket socket)
     char* memblock;
     std::vector<std::string>::iterator itr2;
 
-    for (itr2 = paths.begin(); itr2 != paths.end(); itr2++)
+    for (itr2 = paths.begin(); itr2 != paths.end(); ++itr2)
     {
       try {
         std::ifstream file (*itr2, std::ios::in | std::ios::binary | std::ios::ate);
@@ -43,11 +43,10 @@ void session(tcp::socket socket)
         std::stringstream ss;
         ss << *itr2 << "\n" << size << "\n";
         char extra[1024];
-        std::memset(extra, 0, sizeof extra);
+        std::memset(extra, 0, 1024);
         std::strcpy(extra, ss.str().substr(14, std::string::npos).c_str());
-        size_t request_length = size;
         boost::asio::write(socket, boost::asio::buffer(extra, 1024));
-        boost::asio::write(socket, boost::asio::buffer(memblock, request_length));
+        boost::asio::write(socket, boost::asio::buffer(memblock, size));
         delete[] memblock;
 
         std::cout << "200 OK" << std::endl;
@@ -70,23 +69,18 @@ void session(tcp::socket socket)
   }
 }
 
-void server(boost::asio::io_service& io_service, unsigned short port)
-{
-  tcp::acceptor a(io_service, tcp::endpoint(tcp::v4(), port));
-  for (;;)
-  {
-    tcp::socket socket(io_service);
-    a.accept(socket);
-    std::thread(session, std::move(socket)).detach();
-  }
-}
-
 int main()
 {
   try
   {
     boost::asio::io_service io_service;
-    server(io_service, 8080);
+    tcp::acceptor a(io_service, tcp::endpoint(tcp::v4(), 8080));
+    for (;;)
+    {
+      tcp::socket socket(io_service);
+      a.accept(socket);
+      std::thread(session, std::move(socket)).detach();
+    }
   }
   catch (std::exception& e)
   {

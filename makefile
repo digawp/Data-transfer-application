@@ -1,15 +1,15 @@
 CXX = g++
 RM = rm -f
-CXXFLAGS = -W -Wall -Wextra -Werror -Wunused -Wshadow -ansi -pedantic -std=c++11 -pthread
-LFLAGS = -lboost_system -lboost_filesystem
+CXXFLAGS = -W -Wall -Wextra -Werror -Wunused -Wshadow -Weffc++ -ansi -pedantic -g -std=c++11
+LFLAGS = -lpthread -lboost_system -lboost_filesystem
 SOURCES1 = ./client/client.cpp
 SOURCES2 = ./server/server.cpp
 OBJECTS1 = $(SOURCES1:.cpp=.o)
 OBJECTS2 = $(SOURCES2:.cpp=.o)
 PATH1 = ./client
 PATH2 = ./server
-BIN1 = client
-BIN2 = server
+BIN1 = client.exe
+BIN2 = server.exe
 
 build: $(OBJECTS1) $(OBJECTS2)
 	$(CXX) $(OBJECTS1) -o $(addprefix $(PATH1)/, $(BIN1)) $(CXXFLAGS) $(LFLAGS)
