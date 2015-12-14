@@ -13,22 +13,10 @@ using boost::asio::ip::tcp;
 
 const std::string parent_path = strcat(getenv("HOME"), "/Desktop/ServerFiles");
 
-void session(tcp::socket socket)
+void session(tcp::socket socket, std::vector<std::string> paths)
 {
   try
   {
-    boost::filesystem::path path(parent_path);
-    boost::filesystem::recursive_directory_iterator itr(path);
-    std::vector<std::string> paths;
-    while (itr != boost::filesystem::recursive_directory_iterator())
-    {
-      if (!boost::filesystem::is_directory(itr->path()))
-      {
-        paths.push_back(itr->path().string());
-      }
-      ++itr;
-    }
-
     std::streampos size;
     char* memblock;
     std::vector<std::string>::iterator itr2;
@@ -75,13 +63,23 @@ void session(tcp::socket socket)
 
 void server(boost::asio::io_service& io_service, unsigned short port)
 {
-  tcp::acceptor a(io_service, tcp::endpoint(tcp::v4(), port));
-  for (;;)
+  boost::filesystem::path path(parent_path);
+  boost::filesystem::recursive_directory_iterator itr(path);
+  std::vector<std::string> paths;
+  while (itr != boost::filesystem::recursive_directory_iterator())
   {
-    tcp::socket socket(io_service);
-    a.accept(socket);
-    std::thread(session, std::move(socket)).detach();
+    if (!boost::filesystem::is_directory(itr->path()))
+    {
+      paths.push_back(itr->path().string());
+    }
+    ++itr;
   }
+
+  tcp::acceptor a(io_service, tcp::endpoint(tcp::v4(), port));
+  tcp::socket socket(io_service);
+  std::cout << "listening on " << port << std::endl;
+  a.accept(socket);
+  std::thread(session, std::move(socket), std::move(paths)).join();
 }
 
 int main()
