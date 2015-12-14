@@ -22,7 +22,7 @@ void session(tcp::socket socket)
     std::vector<std::string> paths;
     while (itr != boost::filesystem::recursive_directory_iterator())
     {
-      if (!boost::filesystem::is_directory(itr->path().string()))
+      if (!boost::filesystem::is_directory(itr->path()))
       {
         paths.push_back(itr->path().string());
       }
@@ -33,7 +33,7 @@ void session(tcp::socket socket)
     char* memblock;
     std::vector<std::string>::iterator itr2;
 
-    for (itr2 = paths.begin(); itr2 != paths.end(); itr2++)
+    for (itr2 = paths.begin(); itr2 != paths.end(); ++itr2)
     {
       try {
         std::ifstream file (*itr2, std::ios::in | std::ios::binary | std::ios::ate);
@@ -54,8 +54,6 @@ void session(tcp::socket socket)
         boost::asio::write(socket, boost::asio::buffer(extra, 1024));
         boost::asio::write(socket, boost::asio::buffer(memblock, request_length));
         delete[] memblock;
-
-        std::cout << "200 OK" << std::endl;
       }
       catch (std::fstream::failure e)
       {

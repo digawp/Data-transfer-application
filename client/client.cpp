@@ -10,6 +10,7 @@
 
 using boost::asio::ip::tcp;
 
+const std::string server_ip = "127.0.0.1"; // "192.168.10.2" in actual run
 const std::string parent_path = strcat(getenv("HOME"), "/Desktop/ClientFiles");
 
 int main()
@@ -19,8 +20,7 @@ int main()
   tcp::resolver resolver(io_service);
   try
   {
-    boost::asio::connect(socket, resolver.resolve({"127.0.0.1", "8080"})); // TODO : change by server ip
-    boost::asio::write(socket, boost::asio::buffer("a", 1));
+    boost::asio::connect(socket, resolver.resolve({server_ip, "8080"}));
   }
   catch (std::exception& e)
   {
@@ -43,7 +43,6 @@ int main()
 
         boost::system::error_code error;
         boost::asio::read(socket, boost::asio::buffer(extra, 1024), error);
-        std::cout << extra << std::endl;
         if (error == boost::asio::error::eof)
           break;
         else if (error)
