@@ -10,6 +10,8 @@
 
 using boost::asio::ip::tcp;
 
+const std::string parent_path = strcat(getenv("HOME"), "/Desktop/ClientFiles");
+
 int main()
 {
   boost::asio::io_service io_service;
@@ -32,7 +34,7 @@ int main()
   char* extra;
   char* data;
   bool switcher = true;
-  
+
   for (;;)
   {
       if (switcher) {
@@ -69,12 +71,12 @@ int main()
           throw boost::system::system_error(error);
 
         if (path.find_last_of("/") != std::string::npos) {
-          std::string w = path.substr(0, path.find_last_of("/"));
-          boost::filesystem::path dir("../ClientFiles/"+w);
+          boost::filesystem::path sent_path(path);
+          boost::filesystem::path dir(parent_path + sent_path.parent_path().string());
           boost::filesystem::create_directories(dir);
         }
 
-        std::ofstream file2 ("../ClientFiles/"+path, std::ios::out | std::ios::binary | std::ios::ate);
+        std::ofstream file2 (parent_path + path, std::ios::out | std::ios::binary | std::ios::ate);
         path.clear();
         file2.seekp (0, std::ios::beg);
         file2.write (data, tsize);

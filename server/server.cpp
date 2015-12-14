@@ -11,11 +11,13 @@
 
 using boost::asio::ip::tcp;
 
+const std::string parent_path = strcat(getenv("HOME"), "/Desktop/ServerFiles");
+
 void session(tcp::socket socket)
 {
   try
   {
-    boost::filesystem::path path = "../ServerFiles/";
+    boost::filesystem::path path(parent_path);
     boost::filesystem::recursive_directory_iterator itr(path);
     std::vector<std::string> paths;
     while (itr != boost::filesystem::recursive_directory_iterator())
@@ -40,11 +42,14 @@ void session(tcp::socket socket)
         file.seekg (0, std::ios::beg);
         file.read (memblock, size);
         file.close();
+
+        // construct the metadata of the file to be sent
         std::stringstream ss;
         ss << *itr2 << "\n" << size << "\n";
         char extra[1024];
         std::memset(extra, 0, sizeof extra);
-        std::strcpy(extra, ss.str().substr(14, std::string::npos).c_str());
+        std::strcpy(extra, ss.str().substr(parent_path.length(), std::string::npos).c_str());
+
         size_t request_length = size;
         boost::asio::write(socket, boost::asio::buffer(extra, 1024));
         boost::asio::write(socket, boost::asio::buffer(memblock, request_length));
