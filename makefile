@@ -8,8 +8,8 @@ OBJECTS1 = $(SOURCES1:.cpp=.o)
 OBJECTS2 = $(SOURCES2:.cpp=.o)
 PATH1 = ./client
 PATH2 = ./server
-BIN1 = client
-BIN2 = server
+BIN1 = client.exe
+BIN2 = server.exe
 
 build: $(OBJECTS1) $(OBJECTS2)
 	$(CXX) $(OBJECTS1) -o $(addprefix $(PATH1)/, $(BIN1)) $(CXXFLAGS) $(LFLAGS)
