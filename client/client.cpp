@@ -1,10 +1,5 @@
-#include <cstdlib>
-#include <cstring>
-#include <vector>
-#include <string>
 #include <iostream>
 #include <fstream>
-#include <sstream>
 #include <boost/asio.hpp>
 #include <boost/filesystem.hpp>
 
@@ -17,8 +12,7 @@ int main()
   tcp::resolver resolver(io_service);
   try
   {
-    boost::asio::connect(socket, resolver.resolve({"127.0.0.1", "8080"})); // TODO : change by server ip
-    boost::asio::write(socket, boost::asio::buffer("a", 1));
+    boost::asio::connect(socket, resolver.resolve({"127.0.0.1", "8080"}));
   }
   catch (std::exception& e)
   {
@@ -37,10 +31,10 @@ int main()
   for (;;)
   {
       if (switcher) {
-        extra = new char[1024];
-        std::memset(extra, 0, 1024);
+        extra = new char[512];
+        std::memset(extra, 0, 512);
 
-        boost::asio::read(socket, boost::asio::buffer(extra, 1024), error);
+        boost::asio::read(socket, boost::asio::buffer(extra, 512), error);
         std::cout << extra << std::endl;
         if (error == boost::asio::error::eof)
           break;
@@ -51,7 +45,7 @@ int main()
         ss << extra;
         std::getline(ss, path);
         std::getline(ss, size);
-        tsize = std::stoi(size, nullptr, 10);
+        tsize = std::stoull(size, nullptr, 10);
         size.clear();
         delete[] extra;
         switcher = false;
@@ -66,11 +60,11 @@ int main()
           throw boost::system::system_error(error);
 
         if (path.find_last_of("/") != std::string::npos) {
-          boost::filesystem::path dir(strcat(getenv("HOME"), "/Bureau/ClientFiles") + path.substr(0, path.find_last_of("/")));
+          boost::filesystem::path dir("../ClientFiles/" + path.substr(0, path.find_last_of("/")));
           boost::filesystem::create_directories(dir);
         }
 
-        std::ofstream file2 (strcat(getenv("HOME"), "/Bureau/ClientFiles") + path, std::ios::out | std::ios::binary | std::ios::ate);
+        std::ofstream file2("../ClientFiles/" + path, std::ios::out | std::ios::binary | std::ios::ate);
         path.clear();
         file2.seekp (0, std::ios::beg);
         file2.write (data, tsize);
