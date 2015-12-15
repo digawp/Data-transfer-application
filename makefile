@@ -1,6 +1,6 @@
 CXX = g++
 RM = rm -f
-CXXFLAGS = -Os -std=c++11
+CXXFLAGS = -Ofast -std=c++11
 DFLAGS = -W -Wall -Wextra -Werror -Wunused -Wshadow -Weffc++ -ansi -pedantic -g -std=c++11
 LFLAGS = -lpthread -lboost_system -lboost_filesystem
 SOURCES1 = ./client/client.cpp

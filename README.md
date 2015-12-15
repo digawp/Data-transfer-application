@@ -1,6 +1,6 @@
 # Data-transfer-application
 
-## About the project
+### About the project
 
 Please read the "Projet-statement" file
 
@@ -36,7 +36,11 @@ Just launch the server bin first, and then run the client bin.
 Due to the nature of this project, some informations are hard-coded to be faster and tiny as possible.
 You can change the ip address, the port number, and the paths directly in the code.
 
-If you want to run it under windows, please paid attention to also change the char "/" to "\\" at line 71-72 of client.cpp
+If you want to run it under windows, please paid attention to also change the char "/" to "\\" at line 62-63 of client.cpp
+
+### Notes
+
+If you want to know more about the project research and history, chek the "Project_report" file.
 
 ### License
 
