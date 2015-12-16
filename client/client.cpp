@@ -12,7 +12,7 @@ int main()
   tcp::resolver resolver(io_service);
   try
   {
-    boost::asio::connect(socket, resolver.resolve({"127.0.0.1", "8080"}));
+    boost::asio::connect(socket, resolver.resolve({"192.169.10.2", "8080"}));
   }
   catch (std::exception& e)
   {
@@ -60,7 +60,7 @@ int main()
           throw boost::system::system_error(error);
 
         if (path.find_last_of("/") != std::string::npos) {
-          boost::filesystem::path dir("../ClientFiles/" + path.substr(0, path.find_last_of("/")));
+          boost::filesystem::path dir("./ClientFiles/" + path.substr(0, path.find_last_of("/")));
           boost::filesystem::create_directories(dir);
         }
 

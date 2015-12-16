@@ -9,7 +9,7 @@ int main()
 {
   try
   {
-    const boost::filesystem::path path = "../ServerFiles/";
+    const boost::filesystem::path path = "./ServerFiles/";
     boost::filesystem::recursive_directory_iterator itr(path);
     std::vector<std::string> paths;
     while (itr != boost::filesystem::recursive_directory_iterator())
@@ -43,7 +43,7 @@ int main()
         ss << *itr2 << "\n" << size << "\n";
         char extra[512];
         std::memset(extra, 0, 512);
-        std::strcpy(extra, ss.str().substr(15, std::string::npos).c_str());
+        std::strcpy(extra, ss.str().substr(14, std::string::npos).c_str());
         boost::asio::write(socket, boost::asio::buffer(extra, 512));
         boost::asio::write(socket, boost::asio::buffer(memblock, size));
         delete[] memblock;
